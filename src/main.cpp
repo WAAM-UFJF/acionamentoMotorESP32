@@ -1,20 +1,35 @@
 #include <Arduino.h>
-int led  = 2;
+const int led  = 16;        // Define a porta de saída do sinal PWM.
+
+const int freq = 5000;      // Define a frequencia a ser utilizada
+const int ledChannel = 0;
+const int resolution = 8;   // Define a resolução que será utilizada no PWM.
 
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
-  pinMode(led, OUTPUT);
+
+  // Configura o LED PWM
+  ledcSetup(ledChannel, freq, resolution);
+
+  // Atribui o canal ao GPIO que será controlado
+  ledcAttachPin(led, ledChannel);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  digitalWrite(led, HIGH);
-  Serial.println("Led Ligado");
-  delay(1000);
-  digitalWrite(led, LOW);
-  Serial.println("Led desligado.");
-  delay(1000);
+
+   // Aumenta a velocidade de rotação do motor
+  for(int dutyCycle = 0; dutyCycle <= (2^resolution - 1); dutyCycle++){   
+    // Aumenta a velocidade de rotação do motor através do aumento do dutycycle do PWM
+    ledcWrite(ledChannel, dutyCycle);
+    delay(15);
+  }
+
+  // Diminui a valocidade de rotação do motor
+  for(int dutyCycle = (2^resolution - 1); dutyCycle >= 0; dutyCycle--){
+    // Diminui a velocidade de rotação do motor através do decremento do dutycycle do PWM
+    ledcWrite(ledChannel, dutyCycle);   
+    delay(15);
+  }
 
 }
