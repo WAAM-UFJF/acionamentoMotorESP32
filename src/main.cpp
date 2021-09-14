@@ -1,9 +1,11 @@
 #include <Arduino.h>
-const int led  = 16;        // Define a porta de saída do sinal PWM.
+const int led  = 16;          // Define a porta de saída do sinal PWM.
+const int sentidoMotor1 = 2;  // Porta para definir o sentido de rotação 1.
+const int sentidoMotor2 = 0;  // Porta para definir o sentido de rotação 2.
 
-const int freq = 5000;      // Define a frequencia a ser utilizada
+const int freq = 5000;        // Define a frequencia a ser utilizada
 const int ledChannel = 0;
-const int resolution = 8;   // Define a resolução que será utilizada no PWM.
+const int resolution = 8;     // Define a resolução que será utilizada no PWM.
 
 
 void setup() {
