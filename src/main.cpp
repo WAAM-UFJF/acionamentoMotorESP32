@@ -1,4 +1,9 @@
 #include <Arduino.h>
+#include <Wire.h> 
+#include <Adafruit_INA219.h>
+
+
+
 const int led  = 16;          // Define a porta de saída do sinal PWM.
 const int sentidoMotor1 = 2;  // Porta para definir o sentido de rotação 1.
 const int sentidoMotor2 = 0;  // Porta para definir o sentido de rotação 2.
