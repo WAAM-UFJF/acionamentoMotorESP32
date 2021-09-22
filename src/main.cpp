@@ -66,8 +66,8 @@ void setup() {
   ledcSetup(ledChannel, freq, resolution);  
 
   // Define como output os pinos que definem o sentido de rotação do motor
-  digitalWrite(sentidoMotor1, HIGH);
-  digitalWrite(sentidoMotor2, LOW);
+  digitalWrite(sentidoMotor1, LOW);
+  digitalWrite(sentidoMotor2, HIGH);
 
   // Inicializa o sensor INA219
   if (! ina219_0.begin()) {
