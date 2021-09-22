@@ -5,7 +5,7 @@
 #define SDA 21
 #define SCL 22
 
-
+// Definições do PWM e Ponte H
 const int led  = 16;          // Define a porta de saída do sinal PWM.
 const int sentidoMotor1 = 2;  // Porta para definir o sentido de rotação 1.
 const int sentidoMotor2 = 0;  // Porta para definir o sentido de rotação 2.
@@ -14,33 +14,69 @@ const int freq = 5000;        // Define a frequencia a ser utilizada
 const int ledChannel = 0;
 int resolution = 8;           // Define a resolução que será utilizada no PWM.
 
+// Definições do Encoder
+const int Encoder_C1 = 12;
+const int Encoder_C2 = 14;
+byte Encoder_C1Last;
+int duracao;
+boolean Direcao;
 
+// Definição do sensor de corrente e tensão.
 Adafruit_INA219 ina219_0 (0x40);
+
+void calculapulso()
+{
+  int Lstate = digitalRead(Encoder_C1);
+  if ((Encoder_C1Last == LOW) && Lstate == HIGH)
+  {
+    int val = digitalRead(Encoder_C2);
+    if (val == LOW && Direcao)
+    {
+      Direcao = false; //Reverse
+    }
+    else if (val == HIGH && !Direcao)
+    {
+      Direcao = true;  //Forward
+    }
+  }
+  Encoder_C1Last = Lstate;
+  if (!Direcao)  duracao++;
+  else  duracao--;
+}
+
+void EncoderInit()
+{
+  Serial.println("Iniciei o Encoder");
+  pinMode(Encoder_C2, INPUT);
+  attachInterrupt(14, calculapulso, CHANGE);
+}
+
 
 void setup() {
   Serial.begin(115200);
   pinMode(sentidoMotor1, OUTPUT);
   pinMode(sentidoMotor2, OUTPUT);
   pinMode(led, OUTPUT);
-  digitalWrite(sentidoMotor1, LOW);
-  digitalWrite(sentidoMotor2, HIGH);
+  
 
   // Atribui o canal ao GPIO que será controlado
   ledcAttachPin(led, ledChannel);
 
   // Configura o LED PWM
-  ledcSetup(ledChannel, freq, resolution);
-
-  
+  ledcSetup(ledChannel, freq, resolution);  
 
   // Define como output os pinos que definem o sentido de rotação do motor
+  digitalWrite(sentidoMotor1, HIGH);
+  digitalWrite(sentidoMotor2, LOW);
 
-
-
- if (! ina219_0.begin()) {
+  // Inicializa o sensor INA219
+  if (! ina219_0.begin()) {
     Serial.println("Falha ao encontrar o INA219");
     while (1) { delay(10); }
   } 
+
+  // Inicializa o encoder
+  EncoderInit();
 }
 
 void loop() {
@@ -64,7 +100,15 @@ void loop() {
   Serial.print("Tensão da Carga:  "); Serial.print(loadvoltage); Serial.println(" V");   
   Serial.print("Corrente:       "); Serial.print(current_mA); Serial.println(" mA");     
   Serial.print("Potência:         "); Serial.print(power_mW); Serial.println(" mW");     
+  
+  if(Direcao == false){
+    Serial.println("Sentido: Anti-horário");
+  }
+  else{
+    Serial.println("Sentido: Horário");
+  }
   Serial.println("");
+
   delay(5000);
 
   //  // Aumenta a velocidade de rotação do motor
@@ -112,3 +156,4 @@ void loop() {
   // }
 
 }
+
