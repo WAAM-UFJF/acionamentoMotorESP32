@@ -19,9 +19,6 @@ else:
 	monitor= False
 
 while True:
-	val = str(ser.readline().decode().strip('\r\n'))#Capture serial output as a decoded string
-	valA = val.split("/")
-	#print()
-	if(monitor == True):
-		print(val, end="\r", flush=True)
-	
+	text = ser.readline().decode("utf-8")
+	if text != "":
+		print(text)
